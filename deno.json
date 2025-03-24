@@ -1,7 +1,5 @@
 {
   "imports": {
-    "@hono/swagger-ui": "npm:@hono/swagger-ui@^0.5.1",
-    "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.2",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
     "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.49.1",
     "hono": "jsr:@hono/hono@^4.7.5",

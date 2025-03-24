@@ -1,0 +1,18 @@
+{
+  "imports": {
+    "@hono/swagger-ui": "npm:@hono/swagger-ui@^0.5.1",
+    "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.2",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.49.1",
+    "hono": "jsr:@hono/hono@^4.7.5",
+    "zod": "npm:zod@^3.24.2"
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-env src/main.ts",
+    "dev": "deno run --allow-net --allow-read --allow-env --watch src/main.ts"
+  },
+  "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "hono/jsx"
+  }
+}

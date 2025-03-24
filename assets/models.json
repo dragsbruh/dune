@@ -1,0 +1,182 @@
+[
+  {
+    "name": "deepseek-r1-distill-llama-70b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "deepseek-r1-distill-qwen-32b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "distil-whisper-large-v3-en",
+    "rpm": 20,
+    "rpd": 2000,
+    "tpm": null,
+    "tpd": null,
+    "ash": 7200,
+    "asd": 28800
+  },
+  {
+    "name": "gemma2-9b-it",
+    "rpm": 30,
+    "rpd": 14400,
+    "tpm": 15000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.1-8b-instant",
+    "rpm": 30,
+    "rpd": 14400,
+    "tpm": 6000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.2-1b-preview",
+    "rpm": 30,
+    "rpd": 7000,
+    "tpm": 7000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.2-3b-preview",
+    "rpm": 30,
+    "rpd": 7000,
+    "tpm": 7000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.2-11b-vision-preview",
+    "rpm": 30,
+    "rpd": 7000,
+    "tpm": 7000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.2-90b-vision-preview",
+    "rpm": 15,
+    "rpd": 3500,
+    "tpm": 7000,
+    "tpd": 250000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.3-70b-specdec",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": 100000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-3.3-70b-versatile",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": 100000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama-guard-3-8b",
+    "rpm": 30,
+    "rpd": 14400,
+    "tpm": 15000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama3-8b-8192",
+    "rpm": 30,
+    "rpd": 14400,
+    "tpm": 6000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "llama3-70b-8192",
+    "rpm": 30,
+    "rpd": 14400,
+    "tpm": 6000,
+    "tpd": 500000,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "mistral-saba-24b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "qwen-2.5-32b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "qwen-2.5-coder-32b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "qwen-qwq-32b",
+    "rpm": 30,
+    "rpd": 1000,
+    "tpm": 6000,
+    "tpd": null,
+    "ash": null,
+    "asd": null
+  },
+  {
+    "name": "whisper-large-v3",
+    "rpm": 20,
+    "rpd": 2000,
+    "tpm": null,
+    "tpd": null,
+    "ash": 7200,
+    "asd": 28800
+  },
+  {
+    "name": "whisper-large-v3-turbo",
+    "rpm": 20,
+    "rpd": 2000,
+    "tpm": null,
+    "tpd": null,
+    "ash": 7200,
+    "asd": 28800
+  }
+]

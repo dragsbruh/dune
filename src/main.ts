@@ -1,19 +1,21 @@
 import { Context, Hono } from "hono";
+import { z } from "zod";
 
 import env from "./env.ts";
 
-import { DevDatabase, modelList } from "./database.ts";
+import { modelList, SupabaseDatabase } from "./database.ts";
 import { defaultModelUsage, getRemaining, UsageTracker } from "./usage.ts";
 import { selectorSchema, trackSchema } from "./apiSchema.ts";
 import { sortByReference } from "./utils/sort.ts";
+import { duneText } from "./utils/dune.ts";
 
 const app = new Hono();
 
-const database = new DevDatabase();
+const database = new SupabaseDatabase();
 const usageTracker = new UsageTracker(database);
 
 app.get("/", (c) => {
-  return c.text("Hello Hono!");
+  return c.text(duneText);
 });
 
 app.get("/models", (c) => {
@@ -32,8 +34,8 @@ app.get("/models/:name", (c) => {
 
 app.post("/models/:name/track", async (c) => {
   const { name } = c.req.param();
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
 
@@ -47,15 +49,15 @@ app.post("/models/:name/track", async (c) => {
     return c.json({ error: data.error ?? "invalid request body" }, 400);
   }
 
-  const modelData = await usageTracker.trackUsage(name, user, data.data);
+  const modelData = await usageTracker.trackUsage(name, owner, data.data);
 
   return c.json(modelData);
 });
 
 app.get("/models/:name/usage", async (c) => {
   const { name } = c.req.param();
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
 
@@ -63,15 +65,15 @@ app.get("/models/:name/usage", async (c) => {
     return c.json({ error: "model not found" }, 400);
   }
 
-  const modelData = await usageTracker.getUsageOf(user, name);
+  const modelData = await usageTracker.getUsageOf(owner, name);
 
   return c.json(modelData);
 });
 
 app.delete("/models/:name/usage", async (c) => {
   const { name } = c.req.param();
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
 
@@ -79,14 +81,14 @@ app.delete("/models/:name/usage", async (c) => {
     return c.json({ error: "model not found" }, 400);
   }
 
-  await usageTracker.deleteUsage(user, name);
+  await usageTracker.deleteUsage(owner, name);
   return c.json({ success: true });
 });
 
 app.get("/models/:name/remaining", async (c) => {
   const { name } = c.req.param();
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
 
@@ -94,31 +96,31 @@ app.get("/models/:name/remaining", async (c) => {
     return c.json({ error: "model not found" }, 400);
   }
 
-  const modelUsage = await usageTracker.getUsageOf(user, name);
+  const modelUsage = await usageTracker.getUsageOf(owner, name);
   return c.json(getRemaining(modelUsage));
 });
 
 app.get("/me", async (c) => {
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
-  const usageData = await usageTracker.getUsages(user);
+  const usageData = await usageTracker.getUsages(owner);
   return c.json(usageData);
 });
 
 app.delete("/me", async (c) => {
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
-  await usageTracker.deleteUser(user);
+  await usageTracker.deleteowner(owner);
   return c.json({ success: true });
 });
 
 app.post("/select", async (c) => {
-  const user = getAuth(c);
-  if (user === null) {
+  const owner = getAuth(c);
+  if (owner === null) {
     return c.json({ error: "invalid or missing authorization token" }, 401);
   }
 
@@ -146,12 +148,12 @@ app.post("/select", async (c) => {
     );
   }
 
-  const usageData = await usageTracker.getUsages(user);
+  const usageData = await usageTracker.getUsages(owner);
   const remainingUsages = chooseableModels.map((model) => {
     const usage = usageData.find((usage) => usage.name === model.name);
     return usage
       ? getRemaining(usage)
-      : getRemaining(defaultModelUsage(model.name, user));
+      : getRemaining(defaultModelUsage(model.name, owner));
   }).filter((usage) => {
     return (
       usage.rpm > 0 &&
@@ -172,7 +174,7 @@ function getAuth(c: Context) {
     return null;
   }
   const auth = authHeader.split(" ")[1].trim();
-  return auth !== "" ? auth : null;
+  return z.string().uuid().safeParse(auth).success ? auth : null;
 }
 
 Deno.serve({

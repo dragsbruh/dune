@@ -9,64 +9,67 @@ type DeltaUsage = {
 export class UsageTracker {
   constructor(private database: Database) {}
 
-  async trackUsage(name: string, user: string, deltaUsage: DeltaUsage) {
-    const modelData = await this.database.getUsageOf(user, name) ??
-      defaultModelUsage(name, user);
+  async trackUsage(name: string, owner: string, deltaUsage: DeltaUsage) {
+    const modelData = await this.database.getUsageOf(owner, name) ??
+      defaultModelUsage(name, owner);
     resetTimings(modelData);
 
     modelData.rpm += deltaUsage.requests;
     modelData.rpd += deltaUsage.requests;
-    modelData.tpm = modelData.tpm
+    modelData.tpm = modelData.tpm !== null
       ? modelData.tpm + deltaUsage.tokens
-      : deltaUsage.tokens;
-    modelData.tpd = modelData.tpd
+      : null;
+    modelData.tpd = modelData.tpd !== null
       ? modelData.tpd + deltaUsage.tokens
-      : deltaUsage.tokens;
+      : null;
 
-    await this.database.saveModel(modelData);
+    await this.database.saveUsage(modelData);
     return modelData;
   }
 
   async getUsageOf(
-    user: string,
+    owner: string,
     name: string,
   ): Promise<z.infer<typeof modelUsageSchema>> {
-    return (await this.database.getUsageOf(user, name)) ??
-      defaultModelUsage(name, user);
+    return (await this.database.getUsageOf(owner, name)) ??
+      defaultModelUsage(name, owner);
   }
 
-  getUsages(user: string): Promise<z.infer<typeof modelUsageSchema>[]> {
-    return this.database.getUsages(user);
+  getUsages(owner: string): Promise<z.infer<typeof modelUsageSchema>[]> {
+    return this.database.getUsages(owner);
   }
 
-  deleteUser(user: string) {
-    return this.database.removeUsagesOf(user);
+  deleteowner(owner: string) {
+    return this.database.removeUsagesOf(owner);
   }
 
-  deleteUsage(user: string, name: string) {
-    return this.database.removeUsage(user, name);
+  deleteUsage(owner: string, name: string) {
+    return this.database.removeUsage(owner, name);
   }
 
-  deleteUsages(user: string, names: string[]) {
-    return this.database.removeUsages(user, names);
+  deleteUsages(owner: string, names: string[]) {
+    return this.database.removeUsages(owner, names);
   }
 }
 
 export function defaultModelUsage(
   name: string,
-  user: string,
+  owner: string,
 ): z.infer<typeof modelUsageSchema> {
   const now = Math.floor(Date.now() / 1000);
+  const modelData = modelList.getModel(name)!;
   return {
     id: crypto.randomUUID(),
     name: name,
+
     rpm: 0,
     rpd: 0,
-    tpm: 0,
-    tpd: 0,
-    ash: 0,
-    asd: 0,
-    user: user,
+    tpm: modelData.tpm === null ? null : 0,
+    tpd: modelData.tpd === null ? null : 0,
+    ash: modelData.ash === null ? null : 0,
+    asd: modelData.asd === null ? null : 0,
+
+    owner: owner,
     lastDay: now,
     lastMinute: now,
   };
@@ -102,7 +105,7 @@ export function getRemaining(
   resetTimings(usage);
   const model = modelList.getModel(usage.name);
   if (!model) {
-    return defaultModelUsage(usage.name, usage.user);
+    return defaultModelUsage(usage.name, usage.owner);
   }
   return {
     name: usage.name,
